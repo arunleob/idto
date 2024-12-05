@@ -31,7 +31,7 @@ time_step : 0.05    # Discretization timestep (seconds)
 num_steps : 40      # number of timesteps
 
 # Solver parameters
-max_iters : 200             # maximum Gauss-Newton iterations
+max_iters : 10000             # maximum Gauss-Newton iterations
 method : "trust_region"     # solver method, {linesearch, trust_region}
 linesearch : "backtracking" # linesearch strategy, {armino, backtracking}
 scaling : true
@@ -81,7 +81,7 @@ friction_coefficient : 0.5  # Coefficient of friction.
 stiction_velocity: 0.05     # Regularization velocity, in m/s.
 
 # MPC parameters
-mpc : true
+mpc : false
 mpc_iters : 1
 controller_frequency : 200.0
 sim_time : 5

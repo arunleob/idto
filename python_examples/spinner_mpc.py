@@ -189,6 +189,14 @@ if __name__ == "__main__":
     simulator = Simulator(diagram, diagram_context)
     simulator.set_target_realtime_rate(1.0)
     meshcat.StartRecording()
-    simulator.AdvanceTo(5.0)
+    simulator.AdvanceTo(10.0)
     meshcat.StopRecording()
     meshcat.PublishRecording()
+
+    # Hackily record constraint violations over the trajectory
+    t = np.array(controller.times)
+    h = np.array(controller.constraint_viols)
+
+    import pickle
+    with open("constraint_violations.pkl", "wb") as f:
+        pickle.dump((t, h), f)

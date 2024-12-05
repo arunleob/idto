@@ -13,7 +13,8 @@ from pydrake.all import (AddDefaultVisualization, AddMultibodyPlantSceneGraph,
                          DiagramBuilder, Parser, Simulator, StartMeshcat, 
                          PdControllerGains, JointActuatorIndex, 
                          DiscreteContactApproximation, LeafSystem, BasicVector,
-                         RollPitchYaw, Quaternion, RotationMatrix)
+                         RollPitchYaw, Quaternion, RotationMatrix, AbstractValue,
+                         ContactResults, LogVectorOutput, Value,)
 
 from pyidto import (
     TrajectoryOptimizer,
@@ -155,12 +156,38 @@ class GamepadCommand(LeafSystem):
 
         if gamepad.index == None:
             # If the gamepad is not connected, send zero commands
-            print("Gamepad not connected, sending zero commands.")
-            output.SetFromVector(np.zeros(3))
+            # print("Gamepad not connected, sending zero commands.")
+            v = np.zeros(3)
+            v[0] = 0.4
+            output.SetFromVector(v)
         else:
             output[0] = - gamepad.axes[1]  # x velocity
             output[1] = - gamepad.axes[0]  # y velocity
             output[2] = - gamepad.axes[2]  # z angular velocity
+
+
+class ContactLogger(LeafSystem):
+    """
+    Logger for which feet are in contact (or not).
+    """
+    def __init__(self):
+        LeafSystem.__init__(self)
+        self.DeclareVectorOutputPort("contact", BasicVector(4), self.CalcOutput)
+        self.DeclareAbstractInputPort("contact_results", AbstractValue.Make(ContactResults()))
+
+    def CalcOutput(self, context, output):
+        """Check whether each foot is in contact."""
+        contact_results = self.EvalAbstractInput(context, 0).get_value()
+
+        in_contact = np.array([0.0, 0.0, 0.0, 0.0])
+        for i in range(contact_results.num_point_pair_contacts()):
+            info = contact_results.point_pair_contact_info(i)
+            body_idx = int(info.bodyB_index())
+            slip_speed = info.slip_speed()
+            if slip_speed < 0.0005:
+                in_contact[body_idx - 15] = 1.0
+
+        output.SetFromVector(in_contact)
 
 
 class MiniCheetahMPC(ModelPredictiveController):
@@ -286,6 +313,15 @@ if __name__ == "__main__":
         gamepad.get_output_port(),
         controller.GetInputPort("gamepad_command")
     )
+
+    # Connect a logger for the contact results
+    contact_detector = builder.AddSystem(ContactLogger())
+    logger = LogVectorOutput(contact_detector.get_output_port(0), builder)
+
+    builder.Connect(
+        plant.get_contact_results_output_port(),
+        contact_detector.get_input_port(0)
+    )
     
     # Connect the plant to meshcat for visualization
     AddDefaultVisualization(builder, meshcat)
@@ -310,4 +346,16 @@ if __name__ == "__main__":
     # Simulate and play back on meshcat
     simulator = Simulator(diagram, diagram_context)
     simulator.set_target_realtime_rate(1.0)
-    simulator.AdvanceTo(np.inf)
+    meshcat.StartRecording()
+    simulator.AdvanceTo(5.0)
+    meshcat.PublishRecording()
+
+    # Get log data save to a file
+    log = logger.FindLog(diagram_context)
+    times = log.sample_times()
+    contacts = log.data()
+
+    import pickle
+    with open("mini_cheetah_contacts_slow.pkl", "wb") as f:
+        pickle.dump((times, contacts), f)
+

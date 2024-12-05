@@ -146,6 +146,10 @@ class ModelPredictiveController(LeafSystem):
             "state", BasicVector(nq + nv))
         self.trajectory_output_port = self.DeclareStateOutputPort(
             "optimal_trajectory", self.stored_trajectory)
+        
+        # Hack to record constraint violations
+        self.times = []
+        self.constraint_viols = []
 
     def StoreOptimizerSolution(self, solution, start_time):
         """
@@ -209,6 +213,9 @@ class ModelPredictiveController(LeafSystem):
         solution = TrajectoryOptimizerSolution()
         stats = TrajectoryOptimizerStats()
         self.optimizer.SolveFromWarmStart(self.warm_start, solution, stats)
+
+        self.times.append(context.get_time())
+        self.constraint_viols.append(stats.h_norms[0])
 
         # Store the solution in the abstract state
         state.get_mutable_abstract_state(0).SetFrom(
