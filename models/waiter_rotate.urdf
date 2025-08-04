@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<robot name="waiter">
+  <material name="green">
+    <color rgba=".3 .6 .4 1"/>
+  </material>
+  <material name="red">
+    <color rgba=".9 .1 0 0.1"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.1 0.3 0.5 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 0.1"/>
+  </material>
+
+  <!-- base to fix system in world -->
+  <link name="base">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-4.8 0 -1.05"/>
+      <geometry>
+        <box size="10.0 2.0 2.0"/>
+        <!-- <sphere radius="0.125"/> -->
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-4.8 0 -1.05"/>
+      <geometry>
+        <box size="10.0 2.0 2.0"/>
+        <!-- <sphere radius="0.125"/> -->
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_weld" type="fixed">
+    <parent link="world"/>
+    <child link="base"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0 "/>
+  </joint>
+
+  <!-- base edge sphere for collision -->
+  <link name="base_edge">
+    <collision>
+      <origin rpy="0 0 0" xyz="0.18 0 -0.02"/>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_edge_weld" type="fixed">
+    <parent link="base"/>
+    <child link="base_edge"/>
+    <origin xyz="0 0 -0.05" rpy="0 0 0 "/>
+  </joint>
+
+  <!-- box x-axis -->
+  <link name="box_x">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.0"/>
+      <inertia ixx="0.0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0"/>
+    </inertial>
+  </link>
+  <joint name="box_x" type="prismatic">
+    <parent link="base"/>
+    <child link="box_x"/>
+    <origin xyz="0 0 0" rpy="0 0 0 "/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.0"/>
+  </joint>
+
+  <!-- box roll axis -->
+  <link name="box_y">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.0"/>
+      <inertia ixx="0.0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0"/>
+    </inertial>
+  </link>
+  <joint name="box_y" type="revolute">
+    <parent link="box_x"/>
+    <child link="box_y"/>
+    <origin xyz="0 0 0" rpy="0 0 0 "/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.0"/>
+  </joint>
+
+  <!-- box yaw axis -->
+  <link name="box_yaw">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.0"/>
+      <inertia ixx="0.0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0"/>
+    </inertial>
+  </link>
+  <joint name="box_yaw" type="revolute">
+    <parent link="box_y"/>
+    <child link="box_yaw"/>
+    <origin xyz="0 0 0" rpy="0 0 0 "/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.0"/>
+  </joint>
+
+  <!-- box z-axis-->
+  <link name="box">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1e-2" ixy="0" ixz="0" iyy="1e-2" iyz="0" izz="1e-2"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="1.0 1.0 0.1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.0"/>
+      <geometry>
+        <box size="1.0 1.0 0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="box_z" type="prismatic">
+    <parent link="box_yaw"/>
+    <child link="box"/>
+    <origin xyz="0 0 0" rpy="0 0 0 "/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.0"/>
+  </joint>
+
+  <!-- box edge sphere for collision -->
+  <link name="box_edge">
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.48 0 0.02"/>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="box_edge_weld" type="fixed">
+    <parent link="box"/>
+    <child link="box_edge"/>
+    <origin xyz="0 0 -0.05" rpy="0 0 0 "/>
+  </joint>
+
+</robot>

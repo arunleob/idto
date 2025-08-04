@@ -330,6 +330,12 @@ TrajectoryOptimizerSolution<double> TrajOptExample::SolveTrajectoryOptimization(
     PlayBackTrajectory(solution.q, options.time_step);
   }
 
+  // Print results for comparison with SQP
+  std::cout << "Sl1QP Comparison Results" << std::endl;
+  std::cout << "iters\t|tau|_inf\t|cost_final|_inf" << std::endl;
+  VectorXd q_err = opt_prob.q_nom[options.num_steps] - solution.q[options.num_steps];
+  std::cout << stats.iteration_times.size() << "\t" << tau_max_unactuated << "\t" << q_err.cwiseAbs().maxCoeff() << std::endl;
+
   return solution;
 }
 
