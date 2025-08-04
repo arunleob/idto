@@ -73,7 +73,7 @@ struct SolverParameters {
 
   // Flag for whether we should check for convergence, along with default
   // tolerances for the convergence check
-  bool check_convergence = false;
+  bool check_convergence = true;
   ConvergenceCriteriaTolerances convergence_tolerances;
 
   SolverParameters() = default;
