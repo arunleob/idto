@@ -2685,6 +2685,12 @@ ConvergenceReason TrajectoryOptimizer<T>::VerifyConvergenceCriteria(
     reason |= ConvergenceReason::kSateCriterionSatisfied;
   }
 
+  // Constraint tolerance is small enough and cost variation is small
+  const VectorXd& h = EvalEqualityConstraintViolations(state)
+  if (abs(previous_cost - cost) <= 1e-3 && h.cwiseAbs().maxCoeff() <= 1e-4) {
+    reason |= ConvergenceReason::kCostConstraintSatisfied;
+  }
+
   return ConvergenceReason(reason);
 }
 
