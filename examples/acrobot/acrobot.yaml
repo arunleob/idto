@@ -58,7 +58,7 @@ linear_solver: "pentadiagonal_lu"
 # Playback/visualization parameters
 play_target_trajectory : false
 play_initial_guess : false
-play_optimal_trajectory : false
+play_optimal_trajectory : true
 
 # Debugging parameters
 verbose : true
@@ -67,7 +67,7 @@ print_debug_data : false
 save_solver_stats_csv : true
 
 # MPC parameters
-mpc : true
+mpc : false
 mpc_iters : 1
 controller_frequency : 300
 sim_time : 5
