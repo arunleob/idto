@@ -25,11 +25,11 @@ q_nom_start : [0.0,
                0.8,-0.1, 0.5, 0.0, 0.0,
                0.8,-0.1, 0.5, 0.0, 0.0,
                1.0, 0.0, 0.0, 0.0,
-               0.2, 0.4, 0.8]
-q_nom_end : [0.0,
+               0.0, 0.4, 0.2]
+q_nom_end : [0.2,
              0.0, 0.0, 0.0,
-             0.8,-0.1, 0.5, 0.0, 0.0,
-             0.8,-0.1, 0.5, 0.0, 0.0,
+             2.2,-0.8, 0.5, 0.5, 0.0,
+             2.2,0.3, 0.5, 0.0, 0.0,
              1.0, 0.0, 0.0, 0.0,
              0.2, 0.4, 0.8]
 
@@ -62,10 +62,10 @@ R : [1e-2,
      1e1, 1e1, 1e1,
      1e1, 1e1, 1e1]
 
-Qfq : [0.1, 
-       0.1, 0.1, 0.1, 
-       0.1, 0.1, 0.1, 0.1, 0.1, 
-       0.1, 0.1, 0.1, 0.1, 0.1, 
+Qfq : [10, 
+       10, 0.1, 0.1, 
+       10, 0.1, 0.1, 0.1, 0.1, 
+       10, 0.1, 0.1, 0.1, 0.1, 
        1, 1, 1, 1,
        20, 20, 50]
 Qfv : [0.01, 
@@ -80,7 +80,7 @@ time_step : 0.05    # Discretization timestep (seconds)
 num_steps : 40      # number of timesteps
 
 # Solver parameters
-max_iters : 50              # maximum Gauss-Newton iterations
+max_iters : 1000              # maximum Gauss-Newton iterations
 method : "trust_region"     # solver method, {linesearch, trust_region}
 scaling : true
 equality_constraints : true
@@ -99,9 +99,9 @@ tolerances:
 gradients_method: "forward_differences"
 
 # Playback/visualization parameters
-play_target_trajectory : false
-play_initial_guess : false
-play_optimal_trajectory : false
+play_target_trajectory : true
+play_initial_guess : true
+play_optimal_trajectory : true
 
 # Debugging parameters
 linesearch_plot_every_iteration : false
@@ -124,7 +124,7 @@ friction_coefficient : 0.5  # Coefficient of friction.
 stiction_velocity: 0.05     # Regularization velocity, in m/s.
 
 # MPC parameters
-mpc : true
+mpc : false
 mpc_iters : 1
 controller_frequency : 15
 sim_time : 10
