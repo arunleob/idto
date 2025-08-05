@@ -11,3 +11,5 @@ configure_file(waiter.yaml
                ${CMAKE_BINARY_DIR}/idto/examples/waiter/waiter.yaml COPYONLY)
 configure_file(waiter_rotate.yaml 
                ${CMAKE_BINARY_DIR}/idto/examples/waiter/waiter_rotate.yaml COPYONLY)
+configure_file(waiter_floating.yaml 
+               ${CMAKE_BINARY_DIR}/idto/examples/waiter/waiter_floating.yaml COPYONLY)

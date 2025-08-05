@@ -7,6 +7,8 @@
 
 DEFINE_bool(rotate, false,
             "whether to solve the problem where the plate is rotated 45 degrees");
+DEFINE_bool(floating, false,
+            "whether to solve the problem where the plate is rotated 45 degrees using a floating base");
 
 namespace idto {
 namespace examples {
@@ -40,14 +42,26 @@ class WaiterExample : public TrajOptExample {
  private:
 
   void CreatePlantModel(MultibodyPlant<double>* plant) const final {
-    std::string urdf_file =
-        FindIdtoResource("idto/models/waiter_sphere.urdf");
-    ModelInstanceIndex sphere = Parser(plant).AddModels(urdf_file)[0];
-    plant->set_gravity_enabled(sphere, false);
+    if (!FLAGS_floating) {
+      std::string urdf_file =
+          FindIdtoResource("idto/models/waiter_sphere.urdf");
+      ModelInstanceIndex sphere = Parser(plant).AddModels(urdf_file)[0];
+      plant->set_gravity_enabled(sphere, false);
 
-    urdf_file =
-        FindIdtoResource("idto/models/waiter.urdf");
-    Parser(plant).AddModels(urdf_file);
+      urdf_file =
+          FindIdtoResource("idto/models/waiter.urdf");
+      Parser(plant).AddModels(urdf_file);
+    }
+    else {
+      std::string urdf_file =
+          FindIdtoResource("idto/models/waiter_rotate_sphere.urdf");
+      ModelInstanceIndex sphere = Parser(plant).AddModels(urdf_file)[0];
+      plant->set_gravity_enabled(sphere, false);
+
+      urdf_file =
+          FindIdtoResource("idto/models/waiter_floating.urdf");
+      Parser(plant).AddModels(urdf_file);
+    }
 
   }
 };
@@ -61,11 +75,11 @@ int main(int argc, char* argv[]) {
 
   idto::examples::waiter::WaiterExample example;
   std::string yaml_file;
-  // if (FLAGS_upside_down) {
-  //   yaml_file = "idto/examples/waiter/waiter_rotate.yaml";
-  // } else {
-  yaml_file = "idto/examples/waiter/waiter.yaml";
-  // }
+  if (FLAGS_floating) {
+     yaml_file = "idto/examples/waiter/waiter_floating.yaml";
+  } else {
+     yaml_file = "idto/examples/waiter/waiter.yaml";
+  }
   example.RunExample(yaml_file);
 
   return 0;
