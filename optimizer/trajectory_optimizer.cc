@@ -2522,6 +2522,12 @@ SolverFlag TrajectoryOptimizer<double>::SolveFromWarmStart(
       dL_dq = g.dot(dq) / cost;
     }
 
+    // Eval minimun constraint
+    const MatrixXd& J = EvalEqualityConstraintJacobian(state);
+    VectorXd dq_constraint = (J.transpose()*J).ldlt().solve(-J.transpose()*h);
+    VectorXd residual = J*dq_constraint + h;
+    // std::cout << dq.lpNorm<2>() << " " << Delta << " " << tr_constraint_active << "\t" << (dq.lpNorm<2>() < Delta) << "\t" << (dq_constraint.lpNorm<2>() < Delta) << "\t" << dq_constraint.lpNorm<2>() << "\t" << residual.lpNorm<Eigen::Infinity>() << std::endl;
+
     // Compute the trust region ratio
     rho = CalcTrustRatio(state, dq, &scratch_state);
 
@@ -2575,11 +2581,20 @@ SolverFlag TrajectoryOptimizer<double>::SolveFromWarmStart(
         std::cout << printout_labels << std::endl;
         std::cout << separator_bar << std::endl;
       }
-      std::cout << fmt::format(
+      if (dq_constraint.lpNorm<2>() <= Delta*1.05) {
+        std::cout << fmt::format(
+            "| {:>6} | {:>8.3g} | {:>7.2} | {:>7.3} | {:>10.5} | {:>10.5} | "
+            "{:>10.4} | {:>10.4} |\n",
+            k, cost, Delta, rho, iter_time.count(), g.norm() / cost, dL_dq,
+            h.norm());
+      }
+      else {
+        std::cout << fmt::format(
           "| {:>6} | {:>8.3g} | {:>7.2} | {:>7.3} | {:>10.5} | {:>10.5} | "
-          "{:>10.4} | {:>10.4} |\n",
+          "{:>10.4} | {:>10.4} | infeasible {:>10.4}\n",
           k, cost, Delta, rho, iter_time.count(), g.norm() / cost, dL_dq,
-          h.norm());
+          h.norm(), dq_constraint.lpNorm<2>());
+      }
     }
 
     // Record statistics from this iteration
@@ -2689,7 +2704,6 @@ ConvergenceReason TrajectoryOptimizer<T>::VerifyConvergenceCriteria(
   const VectorX<T>& h = EvalEqualityConstraintViolations(state);
   if (abs(previous_cost - cost) <= 1e-3 && h.cwiseAbs().maxCoeff() <= 1e-4) {
     reason |= ConvergenceReason::kCostConstraintSatisfied;
-    std::cout << "HERE" << std::endl;
   }
 
   return ConvergenceReason(reason);
