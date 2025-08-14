@@ -14,10 +14,10 @@ v_init : [0.0, 0.0, 0.0,
 
 # Target state
 q_nom_start : [0.3, 0.0, -0.05,
-          1.0, 0.0, 0.0, 0.0,
+          0.707, 0.0, 0.0, 0.707,
           0.2, 0.0, 0.0]
 q_nom_end : [0.4, 0.0, -0.05,
-          1.0, 0.0, 0.0, 0.0,
+          0.707, 0.0, 0.0, 0.707,
           0.6, 0.0, 0.0]
 q_nom_relative_to_q_init : [false, false, false, 
                             false, false, false, false, 

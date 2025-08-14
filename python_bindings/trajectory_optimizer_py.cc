@@ -24,6 +24,7 @@ using idto::optimizer::SolverParameters;
 using idto::optimizer::TrajectoryOptimizer;
 using idto::optimizer::TrajectoryOptimizerSolution;
 using idto::optimizer::TrajectoryOptimizerStats;
+using idto::optimizer::TrajectoryOptimizerState;
 using idto::optimizer::WarmStart;
 using idto::optimizer::ConvergenceReason;
 
@@ -55,6 +56,14 @@ void bind_trajectory_optimizer(py::module_& m) {
            &TrajectoryOptimizer<double>::ResetInitialConditions)
       .def("UpdateNominalTrajectory",
            &TrajectoryOptimizer<double>::UpdateNominalTrajectory)
+      .def("CreateState", 
+          [](TrajectoryOptimizer<double>& self) {
+               return std::make_unique<TrajectoryOptimizerState<double>>(self.num_steps(), self.diagram(), self.plant(),
+                                       self.num_equality_constraints());
+          })
+      .def("EvalTau", &TrajectoryOptimizer<double>::EvalTau)
+      .def("EvalEqualityConstraintViolations", &TrajectoryOptimizer<double>::EvalEqualityConstraintViolations)
+      .def("EvalEqualityConstraintJacobian", &TrajectoryOptimizer<double>::EvalEqualityConstraintJacobian)
       .def("params", &TrajectoryOptimizer<double>::params)
       .def("prob", &TrajectoryOptimizer<double>::prob);
   py::class_<WarmStart>(m, "WarmStart")
@@ -65,4 +74,10 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def_readonly("Delta", &WarmStart::Delta)
       .def_readonly("dq", &WarmStart::dq)
       .def_readonly("dqH", &WarmStart::dqH);
+  py::class_<TrajectoryOptimizerState<double>>(m, "TrajectoryOptimizerState")
+      .def("q", &TrajectoryOptimizerState<double>::q)
+      .def("mutable_q", &TrajectoryOptimizerState<double>::mutable_q)
+      .def("set_q", &TrajectoryOptimizerState<double>::set_q);
+      // Trajectory optimizer state is not default constructible: it should be created
+      // in python using the TrajectoryOptimizer.CreateState method.
 }
