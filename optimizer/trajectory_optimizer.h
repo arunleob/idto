@@ -255,6 +255,16 @@ class TrajectoryOptimizer {
       const TrajectoryOptimizerState<T>& state) const;
 
   /**
+   * Evaluate the Jacobian J = ∂tau(q)/∂q of the inverse dynamics
+   *
+   *
+   * @param state the optimizer state
+   * @return const MatrixX<T>& the Jacobian of tau(q)
+   */
+  const MatrixX<T>& EvalTauJacobian(
+      const TrajectoryOptimizerState<T>& state) const;
+
+  /**
    * Evaluate partial derivatives of velocites with respect to positions at each
    * time step.
    *
@@ -1052,6 +1062,15 @@ class TrajectoryOptimizer {
    * @param J the constraint jacobian ∂h(q)/∂q
    */
   void CalcEqualityConstraintJacobian(const TrajectoryOptimizerState<T>& state,
+                                      MatrixX<T>* J) const;
+
+  /**
+   * Compute the Jacobian J = ∂tau(q)/∂q of the inverse dynamics
+   *
+   * @param state the optimizer state
+   * @param J the constraint jacobian ∂tau(q)/∂q
+   */
+  void CalcTauJacobian(const TrajectoryOptimizerState<T>& state,
                                       MatrixX<T>* J) const;
 
   /**

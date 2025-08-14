@@ -1345,6 +1345,52 @@ const MatrixX<T>& TrajectoryOptimizer<T>::EvalEqualityConstraintJacobian(
 }
 
 template <typename T>
+void TrajectoryOptimizer<T>::CalcTauJacobian(
+    const TrajectoryOptimizerState<T>& state, MatrixX<T>* J) const {
+  INSTRUMENT_FUNCTION("Assemble equality constraint Jacobian.");
+  DRAKE_DEMAND(J->cols() == (num_steps() + 1) * plant().num_positions());
+  DRAKE_DEMAND(J->rows() == num_steps() * plant().num_velocities());
+
+  const InverseDynamicsPartials<T>& id_partials =
+      EvalInverseDynamicsPartials(state);
+
+  const int nq = plant().num_positions();
+  const int nv = plant().num_velocities();
+  const int n_steps = num_steps();
+
+  for (int t = 0; t < n_steps; ++t) {
+    for (int i = 0; i < nv; ++i) {
+      // ∂hₜⁱ/∂qₜ₊₁
+      J->block(t * nv + i, (t + 1) * nq, 1, nq) =
+          id_partials.dtau_dqp[t].row(i);
+
+      // ∂hₜⁱ/∂qₜ
+      if (t > 0) {
+        J->block(t * nv + i, t * nq, 1, nq) =
+            id_partials.dtau_dqt[t].row(i);
+      }
+
+      // ∂hₜⁱ/∂qₜ₋₁
+      if (t > 1) {
+        J->block(t * nv + i, (t - 1) * nq, 1, nq) =
+            id_partials.dtau_dqm[t].row(i);
+      }
+    }
+  }
+}
+
+template <typename T>
+const MatrixX<T>& TrajectoryOptimizer<T>::EvalTauJacobian(
+    const TrajectoryOptimizerState<T>& state) const {
+  if (!state.cache().tau_jacobian_up_to_date) {
+    CalcTauJacobian(state,
+                                   &state.mutable_cache().tau_jacobian);
+    state.mutable_cache().tau_jacobian_up_to_date = true;
+  }
+  return state.cache().tau_jacobian;
+}
+
+template <typename T>
 std::unique_ptr<WarmStart> TrajectoryOptimizer<T>::CreateWarmStart(
     const std::vector<VectorX<T>>&) const {
   throw std::runtime_error("CreateWarmStart() only supports T=double.");

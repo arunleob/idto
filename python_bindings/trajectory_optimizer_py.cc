@@ -62,6 +62,7 @@ void bind_trajectory_optimizer(py::module_& m) {
                                        self.num_equality_constraints());
           })
       .def("EvalTau", &TrajectoryOptimizer<double>::EvalTau)
+      .def("EvalTauJacobian", &TrajectoryOptimizer<double>::EvalTauJacobian)
       .def("EvalEqualityConstraintViolations", &TrajectoryOptimizer<double>::EvalEqualityConstraintViolations)
       .def("EvalEqualityConstraintJacobian", &TrajectoryOptimizer<double>::EvalEqualityConstraintJacobian)
       .def("params", &TrajectoryOptimizer<double>::params)

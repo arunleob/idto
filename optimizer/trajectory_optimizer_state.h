@@ -59,6 +59,7 @@ struct TrajectoryOptimizerCache {
         scale_factors((num_steps + 1) * nq),
         constraint_violation(num_eq_constraints),
         constraint_jacobian(num_eq_constraints, (num_steps + 1) * nq),
+        tau_jacobian(num_steps*nv, (num_steps + 1)*nq),
         lagrange_multipliers(num_eq_constraints),
         merit_gradient((num_steps + 1) * nq) {
     trajectory_data.v.assign(num_steps + 1, VectorX<T>(nv));
@@ -67,6 +68,7 @@ struct TrajectoryOptimizerCache {
     N_plus.assign(num_steps + 1, MatrixX<T>::Zero(nv, nq));
     scale_factors.setConstant(1.0);
     constraint_jacobian.setZero();
+    tau_jacobian.setZero();
     lagrange_multipliers.setZero();
   }
 
@@ -179,6 +181,10 @@ struct TrajectoryOptimizerCache {
   // Jacobian of equality constraints J = ∂h(q)/∂q
   MatrixX<T> constraint_jacobian;
   bool constraint_jacobian_up_to_date{false};
+
+  // Jacobian of inverse dynamics tau, J = ∂tau(q)/∂q
+  MatrixX<T> tau_jacobian;
+  bool tau_jacobian_up_to_date{false};
 
   // Lagrange multipliers λ for the equality constraints h(q) = 0
   VectorX<T> lagrange_multipliers;
@@ -344,6 +350,7 @@ class TrajectoryOptimizerState {
     cache_.scale_factors_up_to_date = false;
     cache_.constraint_violation_up_to_date = false;
     cache_.constraint_jacobian_up_to_date = false;
+    cache_.tau_jacobian_up_to_date = false;
     cache_.lagrange_multipliers_up_to_date = false;
     cache_.merit_up_to_date = false;
     cache_.merit_gradient_up_to_date = false;
