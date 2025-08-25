@@ -45,7 +45,7 @@ def define_spinner_optimization_problem():
         q_nom.append(np.array([0.3, 1.5, 2.0 * i / problem.num_steps]))
         v_nom.append(np.array([0.0, 0.0, 0.0]))
     problem.q_nom = q_nom
-    problem.v_nom = v_nom
+    problem.v_nom = v_nomp
 
     return problem
 

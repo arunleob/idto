@@ -75,7 +75,7 @@ Open a web browser to http://localhost:7000 to see the visualization.
 ## Local Installation
 
 The only dependency is [Drake](https://drake.mit.edu/installation.html). 
-We recommend Ubuntu 22.04 and Drake v1.30.0. Other configurations may work
+We recommend Ubuntu 22.04 and Drake v1.43.0. Other configurations may work
 but are untested.
 
 For example, for a binary Drake installation at `$HOME/drake`:
@@ -84,8 +84,8 @@ Download and extract the binaries:
 
 ```bash
 cd $HOME
-wget https://github.com/RobotLocomotion/drake/releases/download/v1.30.0/drake-1.30.0-jammy.tar.gz
-tar -xvzf drake-1.30.0-jammy.tar.gz
+wget https://github.com/RobotLocomotion/drake/releases/download/v1.30.0/drake-1.43.0-jammy.tar.gz
+tar -xvzf drake-1.43.0-jammy.tar.gz
 ```
 
 Install Drake dependencies and gflags:
