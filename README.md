@@ -99,8 +99,8 @@ sudo apt-get install libgflags-dev
 Update environment variables:
 
 ```bash
-echo 'export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:${HOME}/drake' >> ~/.bashrc
-echo 'export PYTHONPATH=${PYTHONPATH}:${HOME}/drake/lib/python3.10/site-packages' >> ~/.bashrc
+echo 'export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:${HOME}/drake-build' >> ~/.bashrc
+echo 'export PYTHONPATH=${PYTHONPATH}:${HOME}/drake-build/install/lib/python3.10/site-packages' >> ~/.bashrc
 source ~/.bashrc
 ```
 

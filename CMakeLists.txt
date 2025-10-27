@@ -8,6 +8,7 @@ option(RUN_X11_TESTS "Run tests that require X11" OFF)
 include(CTest)
 
 find_package(drake CONFIG REQUIRED)
+find_package(gflags REQUIRED)
 
 find_package(PythonInterp ${drake_PYTHON_VERSION} MODULE REQUIRED EXACT)
 

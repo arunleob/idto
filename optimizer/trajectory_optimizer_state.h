@@ -243,6 +243,15 @@ class TrajectoryOptimizerState {
   /** Getter for the sequence of generalized positions. */
   const std::vector<VectorX<T>>& q() const { return q_; }
 
+  /** Getter for the sequence of generalized velocities. */
+  const std::vector<VectorX<T>>& v() const { return cache_.trajectory_data.v; }
+
+  /** Getter for the sequence of generalized positions. */
+  const std::vector<VectorX<T>>& a() const { return cache_.trajectory_data.a; }
+
+  /** Getter for the sequence of generalized positions. */
+  const std::vector<VectorX<T>>& tau() const { return cache_.inverse_dynamics_cache.tau; }
+
   /** Mutable reference to the sequence of generalized positions.
    @warning This method invalidates the cache. However be careful about holding
    onto the returned reference for too long, since updates to the values stored

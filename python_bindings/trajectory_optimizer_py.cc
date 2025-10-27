@@ -77,8 +77,11 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def_readonly("dqH", &WarmStart::dqH);
   py::class_<TrajectoryOptimizerState<double>>(m, "TrajectoryOptimizerState")
       .def("q", &TrajectoryOptimizerState<double>::q)
-      .def("mutable_q", &TrajectoryOptimizerState<double>::mutable_q)
-      .def("set_q", &TrajectoryOptimizerState<double>::set_q);
+    //   .def("mutable_q", &TrajectoryOptimizerState<double>::mutable_q)
+      .def("set_q", &TrajectoryOptimizerState<double>::set_q)
+      .def("v", &TrajectoryOptimizerState<double>::v)
+      .def("a", &TrajectoryOptimizerState<double>::a)
+      .def("tau", &TrajectoryOptimizerState<double>::tau);
       // Trajectory optimizer state is not default constructible: it should be created
       // in python using the TrajectoryOptimizer.CreateState method.
 }
