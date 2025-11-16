@@ -5,6 +5,7 @@
 
 namespace py = pybind11;
 using idto::optimizer::SolverParameters;
+using idto::optimizer::GradientsMethod;
 
 void bind_solver_parameters(py::module_& m) {
   py::class_<SolverParameters>(m, "SolverParameters")
@@ -25,5 +26,10 @@ void bind_solver_parameters(py::module_& m) {
                      &SolverParameters::equality_constraints)
       .def_readwrite("Delta0", &SolverParameters::Delta0)
       .def_readwrite("Delta_max", &SolverParameters::Delta_max)
-      .def_readwrite("num_threads", &SolverParameters::num_threads);
+      .def_readwrite("num_threads", &SolverParameters::num_threads)
+      .def_readwrite("gradients_method", &SolverParameters::gradients_method);
+
+  py::enum_<GradientsMethod>(m, "GradientsMethod")
+    .value("kForwardDifferences", GradientsMethod::kForwardDifferences)
+    .value("kAutoDiff", GradientsMethod::kAutoDiff);
 }
