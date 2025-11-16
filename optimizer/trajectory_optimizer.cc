@@ -265,8 +265,8 @@ void TrajectoryOptimizer<T>::CalcContactForceContribution(
 
   // Compute the distance at which contact forces are zero: we don't need to do
   // any geometry queries beyond this distance
-  const double eps = sqrt(std::numeric_limits<double>::epsilon());
-  double threshold = -sigma * log(exp(eps / (sigma * k)) - 1.0);
+//   const double eps = sqrt(std::numeric_limits<double>::epsilon());
+//   double threshold = -sigma * log(exp(eps / (sigma * k)) - 1.0);
 
   // Get signed distance pairs
   const drake::geometry::QueryObject<T>& query_object =
@@ -276,7 +276,7 @@ void TrajectoryOptimizer<T>::CalcContactForceContribution(
   const drake::geometry::SceneGraphInspector<T>& inspector =
       query_object.inspector();
   const std::vector<SignedDistancePair<T>>& signed_distance_pairs =
-      query_object.ComputeSignedDistancePairwiseClosestPoints(threshold);
+      query_object.ComputeSignedDistancePairwiseClosestPoints();
 
   for (const SignedDistancePair<T>& pair : signed_distance_pairs) {
     // Normal outwards from A.
@@ -348,15 +348,18 @@ void TrajectoryOptimizer<T>::CalcContactForceContribution(
     // of k Newtons per meter, with some smoothing defined by sigma.
     T compliant_fn;
     const T exponent = -pair.distance / sigma;
-    if (exponent >= 37) {
-      // If the exponent is going to be very large, replace with the
-      // functional limit.
-      // N.B. x = 37 is the first integer such that exp(x)+1 = exp(x) in
-      // double precision.
-      compliant_fn = -k * pair.distance;
-    } else {
-      compliant_fn = sigma * k * log(1 + exp(exponent));
-    }
+    // if (exponent >= 37) {
+    //   // If the exponent is going to be very large, replace with the
+    //   // functional limit.
+    //   // N.B. x = 37 is the first integer such that exp(x)+1 = exp(x) in
+    //   // double precision.
+    //   compliant_fn = -k * pair.distance;
+    // } else {
+    //   compliant_fn = sigma * k * log(1 + exp(exponent));
+    // }
+
+    compliant_fn = sigma * k * (exponent + sqrt(exponent*exponent + 4))*0.5; // Alternative f(x) = 0.5(x + sqrt(x^2 + 4))
+
     const T fn = compliant_fn * dissipation_factor;
 
     // Tangential frictional component.
