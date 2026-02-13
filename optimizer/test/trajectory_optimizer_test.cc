@@ -127,7 +127,7 @@ GTEST_TEST(TrajectoryOptimizerTest, QuaternionDofs) {
 
   const int nq = plant.num_positions();
   const int nv = plant.num_velocities();
-  EXPECT_TRUE(body.is_floating());
+  EXPECT_TRUE(body.is_floating_base_body());
   ASSERT_EQ(nq, 7);
   ASSERT_EQ(nv, 6);
 
