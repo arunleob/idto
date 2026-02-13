@@ -72,36 +72,30 @@ $ ./python_examples/mini_cheetah_mpc.py
 
 Open a web browser to http://localhost:7000 to see the visualization.
 
-## Local Installation
+## Local Installation (Ubuntu 24)
 
-The only dependency is [Drake](https://drake.mit.edu/installation.html). 
-We recommend Ubuntu 22.04 and Drake v1.43.0. Other configurations may work
-but are untested.
-
-For example, for a binary Drake installation at `$HOME/drake`:
-
-Download and extract the binaries:
-
-```bash
-cd $HOME
-wget https://github.com/RobotLocomotion/drake/releases/download/v1.30.0/drake-1.43.0-jammy.tar.gz
-tar -xvzf drake-1.43.0-jammy.tar.gz
+IDTO relies on drake, which we install using the apt [instructions](https://drake.mit.edu/apt.html), reproduced below as of Feb 13th, 2026 with Drake version 1.49.0. First install `dpkg-dev` using `sudo apt install dpkg-dev'. Then run the following commands:
+```
+sudo apt-get update
+sudo apt-get install --no-install-recommends \
+  ca-certificates gnupg lsb-release wget
+wget -qO- https://drake-apt.csail.mit.edu/drake.asc | gpg --dearmor - \
+  | sudo tee /etc/apt/trusted.gpg.d/drake.gpg >/dev/null
+echo "deb [arch=$(dpkg-architecture -qDEB_HOST_ARCH)] https://drake-apt.csail.mit.edu/$(lsb_release -cs) $(lsb_release -cs) main" \
+  | sudo tee /etc/apt/sources.list.d/drake.list >/dev/null
+sudo apt-get update
+sudo apt-get install --no-install-recommends drake-dev
 ```
 
-Install Drake dependencies and gflags:
-
-```bash
-cd $HOME/drake
-sudo ./share/drake/setup/install_prereqs
-sudo apt-get install libgflags-dev
+Once drake is installed, add it to the path and python path using the following
+```
+export PATH="/opt/drake/bin${PATH:+:${PATH}}"
+export PYTHONPATH="/opt/drake/lib/python3.12/site-packages${PYTHONPATH:+:${PYTHONPATH}}"
 ```
 
-Update environment variables:
-
-```bash
-echo 'export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:${HOME}/drake-build' >> ~/.bashrc
-echo 'export PYTHONPATH=${PYTHONPATH}:${HOME}/drake-build/install/lib/python3.10/site-packages' >> ~/.bashrc
-source ~/.bashrc
+Install the following for building IDTO and the python bindings
+```
+sudo apt-get install cmake python3.12-dev libgflags-dev
 ```
 
 ### C++
@@ -111,6 +105,8 @@ Clone this repository:
 ```bash
 git clone https://github.com/ToyotaResearchInstitute/idto/
 ```
+
+Occasionally we have observed errors occuring due to package resolution between Drake and Conda. If you have conda installed, we recommend doing `conda deactivate` before the following steps, otherwise errors may occur due to a mismatch between the `spdlog` and `fmt` libraries.
 
 Configure and build:
 
