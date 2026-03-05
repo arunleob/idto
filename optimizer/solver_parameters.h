@@ -164,6 +164,10 @@ struct SolverParameters {
   // Indicator for which DoFs the nominal trajectory is defined as relative to
   // the initial condition. Useful for locomotion or continuous rotation tasks.
   VectorX<bool> q_nom_relative_to_q_init;
+
+  // Allow for user to specify the contact pairs to consider during the solve
+  bool manual_contact_pairs{false};
+  std::vector<std::string> contact_pairs;
 };
 
 }  // namespace optimizer

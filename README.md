@@ -125,7 +125,7 @@ ctest
 
 ### Python
 
-A limited subset of functionality is available via python bindings.
+A limited subset of functionality is available via python bindings. Drake 1.49.0 ships with Python 3.12 bindings as of Feb 13th, 2026.
 
 Build and install with pip:
 

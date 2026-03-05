@@ -5,6 +5,10 @@
 #
 ##
 
+manual_contact_pairs: false
+contact_pairs: [ball, link_3, ball, link_7, ball, link_11, ball, link_15, ball, hand_root]
+#   - test: result
+
 # Initial state
 q_init : [-0.1, 0.8, 1.0, 1.0,   # outside finger
           0.6, 2.1, 1.0, 1.0,   # thumb
@@ -153,7 +157,7 @@ gradients_method: "forward_differences"
 # Playback/visualization parameters
 play_target_trajectory : false
 play_initial_guess : false
-play_optimal_trajectory : false
+play_optimal_trajectory : true
 
 # Debugging parameters
 linesearch_plot_every_iteration : false
