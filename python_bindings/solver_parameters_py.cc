@@ -27,7 +27,9 @@ void bind_solver_parameters(py::module_& m) {
       .def_readwrite("Delta0", &SolverParameters::Delta0)
       .def_readwrite("Delta_max", &SolverParameters::Delta_max)
       .def_readwrite("num_threads", &SolverParameters::num_threads)
-      .def_readwrite("gradients_method", &SolverParameters::gradients_method);
+      .def_readwrite("gradients_method", &SolverParameters::gradients_method)
+      .def_readwrite("manual_contact_pairs", &SolverParameters::manual_contact_pairs)
+      .def_readwrite("contact_pairs", &SolverParameters::contact_pairs);
 
   py::enum_<GradientsMethod>(m, "GradientsMethod")
     .value("kForwardDifferences", GradientsMethod::kForwardDifferences)
