@@ -36,7 +36,8 @@ using drake::multibody::MultibodyPlant;
 using drake::systems::Context;
 using drake::systems::Diagram;
 using internal::PentaDiagonalMatrix;
-template <typename> class TrajectorySQP; // Forward declaration to enable friend class
+
+class TrajectorySQP; // Forward declaration to enable friend class
 
 template <typename T>
 class TrajectoryOptimizer {
@@ -503,7 +504,7 @@ class TrajectoryOptimizer {
  private:
   // Friend class to facilitate testing.
   friend class TrajectoryOptimizerTester;
-  friend class TrajectorySQP<T>;
+  friend class TrajectorySQP;
 
   // Allow different specializations to access each other's private functions.
   // In particular we want to allow TrajectoryOptimizer<double> to have access

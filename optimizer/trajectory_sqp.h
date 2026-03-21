@@ -22,12 +22,11 @@ using drake::solvers::MathematicalProgram;
 using drake::solvers::VectorXDecisionVariable;
 using internal::PentaDiagonalMatrix;
 
-template <typename T>
-class TrajectorySQP : public TrajectoryOptimizer<T> {
+class TrajectorySQP : public TrajectoryOptimizer<double> {
  public:
-  using TrajectoryOptimizer<T>::TrajectoryOptimizer;
+  using TrajectoryOptimizer<double>::TrajectoryOptimizer;
   
-  TrajectorySQP(const Diagram<T>* diagram, const MultibodyPlant<T>* plant,
+  TrajectorySQP(const Diagram<double>* diagram, const MultibodyPlant<double>* plant,
                       const ProblemDefinition& prob,
                       const Eigen::VectorXd& scaling,
                       const SolverParameters& params = SolverParameters{});
@@ -39,6 +38,9 @@ class TrajectorySQP : public TrajectoryOptimizer<T> {
   // Get dynamics residual and jacobian
   Eigen::VectorXd GetDynamicsResidual() const { return dynamics_residual_; }
   Eigen::MatrixXd GetDynamicsJacobian() const { return dynamics_jacobian_; }
+
+  // Update the dynamics constraint residual in place
+  void UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state);
 
   // Instantiate mathematical program
   MathematicalProgram prog_; 

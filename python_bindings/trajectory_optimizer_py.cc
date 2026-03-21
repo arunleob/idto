@@ -69,47 +69,48 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("EvalEqualityConstraintJacobian", &TrajectoryOptimizer<double>::EvalEqualityConstraintJacobian)
       .def("params", &TrajectoryOptimizer<double>::params)
       .def("prob", &TrajectoryOptimizer<double>::prob);
-  py::class_<TrajectorySQP<double>>(m, "TrajectorySQP")
+  py::class_<TrajectorySQP>(m, "TrajectorySQP")
       .def(py::init<const Diagram<double>*, const MultibodyPlant<double>*,
                     const ProblemDefinition&, const Eigen::VectorXd&, const SolverParameters&>())
-      .def("time_step", &TrajectorySQP<double>::time_step)
-      .def("num_steps", &TrajectorySQP<double>::num_steps)
+      .def("time_step", &TrajectorySQP::time_step)
+      .def("num_steps", &TrajectorySQP::num_steps)
       .def("Solve",
-           [](TrajectorySQP<double>& optimizer,
+           [](TrajectorySQP& optimizer,
               const std::vector<VectorXd>& q_guess,
               TrajectoryOptimizerSolution<double>* solution,
               TrajectoryOptimizerStats<double>* stats) {
              optimizer.Solve(q_guess, solution, stats);
            })
       .def("SolveFromWarmStart",
-           [](TrajectorySQP<double>& optimizer,
+           [](TrajectorySQP& optimizer,
               WarmStart* warm_start,
               TrajectoryOptimizerSolution<double>* solution,
               TrajectoryOptimizerStats<double>* stats) {
              optimizer.SolveFromWarmStart(warm_start, solution, stats);
            })
-      .def("CreateWarmStart", &TrajectorySQP<double>::CreateWarmStart)
+      .def("CreateWarmStart", &TrajectorySQP::CreateWarmStart)
       .def("ResetInitialConditions",
-           &TrajectorySQP<double>::ResetInitialConditions)
+           &TrajectorySQP::ResetInitialConditions)
       .def("UpdateNominalTrajectory",
-           &TrajectorySQP<double>::UpdateNominalTrajectory)
+           &TrajectorySQP::UpdateNominalTrajectory)
       .def("CreateState", 
-          [](TrajectorySQP<double>& self) {
+          [](TrajectorySQP& self) {
                return std::make_unique<TrajectoryOptimizerState<double>>(self.num_steps(), self.diagram(), self.plant(),
                                        self.num_equality_constraints());
           })
-      .def("EvalTau", &TrajectorySQP<double>::EvalTau)
-      .def("EvalTauJacobian", &TrajectorySQP<double>::EvalTauJacobian)
-      .def("EvalEqualityConstraintViolations", &TrajectorySQP<double>::EvalEqualityConstraintViolations)
-      .def("EvalEqualityConstraintJacobian", &TrajectorySQP<double>::EvalEqualityConstraintJacobian)
-      .def("params", &TrajectorySQP<double>::params)
-      .def("prob", &TrajectorySQP<double>::prob)
-      .def("unactuated_dofs", &TrajectorySQP<double>::unactuated_dofs)
-      .def("actuated_dofs", &TrajectorySQP<double>::actuated_dofs)
-      .def("GetQIndex", &TrajectorySQP<double>::GetQIndex)
-      .def("GetUIndex", &TrajectorySQP<double>::GetUIndex)
-      .def("GetDynamicsResidual", &TrajectorySQP<double>::GetDynamicsResidual)
-      .def("GetDynamicsJacobian", &TrajectorySQP<double>::GetDynamicsJacobian);
+      .def("EvalTau", &TrajectorySQP::EvalTau)
+      .def("EvalTauJacobian", &TrajectorySQP::EvalTauJacobian)
+      .def("EvalEqualityConstraintViolations", &TrajectorySQP::EvalEqualityConstraintViolations)
+      .def("EvalEqualityConstraintJacobian", &TrajectorySQP::EvalEqualityConstraintJacobian)
+      .def("UpdateDynamicsResidual", &TrajectorySQP::UpdateDynamicsResidual)
+      .def("params", &TrajectorySQP::params)
+      .def("prob", &TrajectorySQP::prob)
+      .def("unactuated_dofs", &TrajectorySQP::unactuated_dofs)
+      .def("actuated_dofs", &TrajectorySQP::actuated_dofs)
+      .def("GetQIndex", &TrajectorySQP::GetQIndex)
+      .def("GetUIndex", &TrajectorySQP::GetUIndex)
+      .def("GetDynamicsResidual", &TrajectorySQP::GetDynamicsResidual)
+      .def("GetDynamicsJacobian", &TrajectorySQP::GetDynamicsJacobian);
   py::class_<WarmStart>(m, "WarmStart")
       // Warm start is not default constructible: it should be created
       // in python using the TrajectoryOptimizer.CreateWarmStart method.
