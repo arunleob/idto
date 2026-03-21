@@ -42,9 +42,9 @@ TrajectorySQP<T>::TrajectorySQP(const Diagram<T>* diagram,
   dynamics_jacobian_ = Eigen::MatrixXd::Zero(nc_dynamics_, prog_.num_vars());
 
   // Fill constant terms of jacobian
-  auto tau_scaling = scaling_(u_index_[0]).asDiagonal();
+  auto tau_scaling = (-scaling_(u_index_[0])).asDiagonal();
   for (int k = 0; k < this->num_steps(); ++k) {
-    dynamics_jacobian_(dynamics_index_[k](this->actuated_dofs_), u_index_[k]) = -tau_scaling;
+    dynamics_jacobian_(dynamics_index_[k].segment(nv_ - nu_, nu_), u_index_[k]) = tau_scaling;
   }
 
 }
