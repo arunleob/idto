@@ -240,7 +240,7 @@ TrajectoryOptimizerSolution<double> TrajOptExample::SolveTrajectoryOptimization(
   }
 
   // Solve the optimzation problem
-  TrajectoryOptimizer<double> optimizer(diagram.get(), &plant, opt_prob,
+  TrajectorySQP<double> optimizer(diagram.get(), &plant, opt_prob,
                                         solver_params);
   TrajectoryOptimizerSolution<double> solution;
   TrajectoryOptimizerStats<double> stats;

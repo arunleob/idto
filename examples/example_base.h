@@ -9,6 +9,7 @@
 #include "examples/yaml_config.h"
 #include "optimizer/problem_definition.h"
 #include "optimizer/trajectory_optimizer.h"
+#include "optimizer/trajectory_sqp.h"
 #include "utils/find_resource.h"
 #include <drake/common/find_resource.h>
 #include <drake/geometry/meshcat.h>
@@ -39,7 +40,7 @@ using optimizer::ScalingMethod;
 using optimizer::SolverFlag;
 using optimizer::SolverMethod;
 using optimizer::SolverParameters;
-using optimizer::TrajectoryOptimizer;
+using optimizer::TrajectorySQP;
 using optimizer::TrajectoryOptimizerSolution;
 using optimizer::TrajectoryOptimizerStats;
 

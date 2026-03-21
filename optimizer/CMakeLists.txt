@@ -55,6 +55,7 @@ add_library(trajectory_optimizer
 add_library(trajectory_sqp
             trajectory_sqp.cc
             trajectory_sqp.h)
+target_link_libraries(trajectory_sqp drake::drake)
 if (OpenMP_CXX_FOUND)
     target_link_libraries(trajectory_optimizer 
                         trajectory_sqp

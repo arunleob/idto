@@ -103,7 +103,11 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("EvalEqualityConstraintViolations", &TrajectorySQP<double>::EvalEqualityConstraintViolations)
       .def("EvalEqualityConstraintJacobian", &TrajectorySQP<double>::EvalEqualityConstraintJacobian)
       .def("params", &TrajectorySQP<double>::params)
-      .def("prob", &TrajectorySQP<double>::prob);
+      .def("prob", &TrajectorySQP<double>::prob)
+      .def("GetQIndex", &TrajectorySQP<double>::GetQIndex)
+      .def("GetUIndex", &TrajectorySQP<double>::GetUIndex)
+      .def("GetDynamicsResidual", &TrajectorySQP<double>::GetDynamicsResidual)
+      .def("GetDynamicsJacobian", &TrajectorySQP<double>::GetDynamicsJacobian);
   py::class_<WarmStart>(m, "WarmStart")
       // Warm start is not default constructible: it should be created
       // in python using the TrajectoryOptimizer.CreateWarmStart method.
