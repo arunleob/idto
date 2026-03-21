@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "optimizer/trajectory_optimizer.h"
+#include "optimizer/trajectory_sqp.h"
 #include "optimizer/warm_start.h"
 #include <drake/multibody/parsing/parser.h>
 #include <drake/multibody/plant/multibody_plant.h>
@@ -22,6 +23,7 @@ using Eigen::VectorXd;
 using idto::optimizer::ProblemDefinition;
 using idto::optimizer::SolverParameters;
 using idto::optimizer::TrajectoryOptimizer;
+using idto::optimizer::TrajectorySQP;
 using idto::optimizer::TrajectoryOptimizerSolution;
 using idto::optimizer::TrajectoryOptimizerStats;
 using idto::optimizer::TrajectoryOptimizerState;
@@ -67,6 +69,41 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("EvalEqualityConstraintJacobian", &TrajectoryOptimizer<double>::EvalEqualityConstraintJacobian)
       .def("params", &TrajectoryOptimizer<double>::params)
       .def("prob", &TrajectoryOptimizer<double>::prob);
+  py::class_<TrajectorySQP<double>>(m, "TrajectorySQP")
+      .def(py::init<const Diagram<double>*, const MultibodyPlant<double>*,
+                    const ProblemDefinition&, const SolverParameters&>())
+      .def("time_step", &TrajectorySQP<double>::time_step)
+      .def("num_steps", &TrajectorySQP<double>::num_steps)
+      .def("Solve",
+           [](TrajectorySQP<double>& optimizer,
+              const std::vector<VectorXd>& q_guess,
+              TrajectoryOptimizerSolution<double>* solution,
+              TrajectoryOptimizerStats<double>* stats) {
+             optimizer.Solve(q_guess, solution, stats);
+           })
+      .def("SolveFromWarmStart",
+           [](TrajectorySQP<double>& optimizer,
+              WarmStart* warm_start,
+              TrajectoryOptimizerSolution<double>* solution,
+              TrajectoryOptimizerStats<double>* stats) {
+             optimizer.SolveFromWarmStart(warm_start, solution, stats);
+           })
+      .def("CreateWarmStart", &TrajectorySQP<double>::CreateWarmStart)
+      .def("ResetInitialConditions",
+           &TrajectorySQP<double>::ResetInitialConditions)
+      .def("UpdateNominalTrajectory",
+           &TrajectorySQP<double>::UpdateNominalTrajectory)
+      .def("CreateState", 
+          [](TrajectorySQP<double>& self) {
+               return std::make_unique<TrajectoryOptimizerState<double>>(self.num_steps(), self.diagram(), self.plant(),
+                                       self.num_equality_constraints());
+          })
+      .def("EvalTau", &TrajectorySQP<double>::EvalTau)
+      .def("EvalTauJacobian", &TrajectorySQP<double>::EvalTauJacobian)
+      .def("EvalEqualityConstraintViolations", &TrajectorySQP<double>::EvalEqualityConstraintViolations)
+      .def("EvalEqualityConstraintJacobian", &TrajectorySQP<double>::EvalEqualityConstraintJacobian)
+      .def("params", &TrajectorySQP<double>::params)
+      .def("prob", &TrajectorySQP<double>::prob);
   py::class_<WarmStart>(m, "WarmStart")
       // Warm start is not default constructible: it should be created
       // in python using the TrajectoryOptimizer.CreateWarmStart method.

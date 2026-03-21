@@ -51,8 +51,13 @@ target_link_libraries(trajectory_optimizer_workspace drake::drake)
 add_library(trajectory_optimizer
             trajectory_optimizer.cc
             trajectory_optimizer.h)
+
+add_library(trajectory_sqp
+            trajectory_sqp.cc
+            trajectory_sqp.h)
 if (OpenMP_CXX_FOUND)
     target_link_libraries(trajectory_optimizer 
+                        trajectory_sqp
                         inverse_dynamics_partials
                         penta_diagonal_matrix
                         penta_diagonal_solver
@@ -68,6 +73,7 @@ if (OpenMP_CXX_FOUND)
 else()
     message(WARNING "OpenMP not found. Trajectory optimizer will not be parallelized.")
     target_link_libraries(trajectory_optimizer 
+                        trajectory_sqp
                         inverse_dynamics_partials
                         penta_diagonal_matrix
                         penta_diagonal_solver
@@ -102,6 +108,7 @@ target_include_directories(trajectory_optimizer_test PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}")
 target_link_libraries(trajectory_optimizer_test 
                       trajectory_optimizer
+                      trajectory_sqp
                       find_resource
                       drake::drake
                       gtest)
