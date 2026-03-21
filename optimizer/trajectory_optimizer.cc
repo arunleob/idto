@@ -68,6 +68,9 @@ TrajectoryOptimizer<T>::TrajectoryOptimizer(const Diagram<T>* diagram,
       if (B.row(i).sum() == 0) {
         unactuated_dofs_.push_back(i);
       }
+      else {
+        actuated_dofs_.push_back(i);
+      }
     }
   }
 

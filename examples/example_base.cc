@@ -240,7 +240,8 @@ TrajectoryOptimizerSolution<double> TrajOptExample::SolveTrajectoryOptimization(
   }
 
   // Solve the optimzation problem
-  TrajectorySQP<double> optimizer(diagram.get(), &plant, opt_prob,
+  Eigen::VectorXd scaling = Eigen::VectorXd::Ones((plant.num_positions() + plant.num_actuators())*opt_prob.num_steps);
+  TrajectorySQP<double> optimizer(diagram.get(), &plant, opt_prob, scaling,
                                         solver_params);
   TrajectoryOptimizerSolution<double> solution;
   TrajectoryOptimizerStats<double> stats;

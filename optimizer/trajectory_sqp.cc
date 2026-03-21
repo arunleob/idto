@@ -5,12 +5,15 @@ namespace optimizer {
 
 template <typename T>
 TrajectorySQP<T>::TrajectorySQP(const Diagram<T>* diagram,
-                                            const MultibodyPlant<T>* plant,
-                                            const ProblemDefinition& prob,
-                                            const SolverParameters& params)
+                                const MultibodyPlant<T>* plant,
+                                const ProblemDefinition& prob,
+                                const Eigen::VectorXd& scaling,
+                                const SolverParameters& params)
     : TrajectoryOptimizer<T>(diagram, plant, prob, params),
       nq_(plant->num_positions()),
+      nv_(plant->num_velocities()),
       nu_(plant->num_velocities() - this->unactuated_dofs_.size()),
+      scaling_(scaling),
       nc_dynamics_(plant->num_velocities() * this->num_steps()) {
   // Init MathematicalProgram (order determines indexing)
   q_sym_.resize(this->num_steps());
@@ -30,9 +33,19 @@ TrajectorySQP<T>::TrajectorySQP(const Diagram<T>* diagram,
     u_index_[k] = prog_.FindDecisionVariableIndices(u_sym_[k]);
   }
 
-  // Init dynamics jacobian and residual
-  dynamics_jacobian_ = Eigen::MatrixXd::Zero(nc_dynamics_, prog_.num_vars());
+  // Init dynamics indices, residuals, and jacobian
+  dynamics_index_.resize(this->num_steps());
+  for (int k = 0; k < this->num_steps(); ++k) {
+    dynamics_index_[k] = Eigen::VectorXi::LinSpaced(nv_, nv_*k, nv_*(k + 1) - 1);
+  }
   dynamics_residual_ = Eigen::VectorXd::Zero(nc_dynamics_);
+  dynamics_jacobian_ = Eigen::MatrixXd::Zero(nc_dynamics_, prog_.num_vars());
+
+  // Fill constant terms of jacobian
+  auto tau_scaling = scaling_(u_index_[0]).asDiagonal();
+  for (int k = 0; k < this->num_steps(); ++k) {
+    dynamics_jacobian_(dynamics_index_[k](this->actuated_dofs_), u_index_[k]) = -tau_scaling;
+  }
 
 }
 

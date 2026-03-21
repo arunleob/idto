@@ -80,6 +80,13 @@ class TrajectoryOptimizer {
   const std::vector<int>& unactuated_dofs() const { return unactuated_dofs_; }
 
   /**
+   * Return indices of the actuated degrees of freedom in the model.
+   *
+   * @return const std::vector<int>& indices for the actuated DoFs
+   */
+  const std::vector<int>& actuated_dofs() const { return actuated_dofs_; }
+
+  /**
    * Convienience function to get the number of equality constraints (i.e.,
    * torques on unactuated DoFs at each time step)
    *
@@ -1130,6 +1137,9 @@ class TrajectoryOptimizer {
 
   // Indices of unactuated degrees of freedom
   std::vector<int> unactuated_dofs_;
+
+  // Indices of actuated degrees of freedom
+  std::vector<int> actuated_dofs_;
 
   // Various parameters
   const SolverParameters params_;

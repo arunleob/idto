@@ -71,7 +71,7 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("prob", &TrajectoryOptimizer<double>::prob);
   py::class_<TrajectorySQP<double>>(m, "TrajectorySQP")
       .def(py::init<const Diagram<double>*, const MultibodyPlant<double>*,
-                    const ProblemDefinition&, const SolverParameters&>())
+                    const ProblemDefinition&, const Eigen::VectorXd&, const SolverParameters&>())
       .def("time_step", &TrajectorySQP<double>::time_step)
       .def("num_steps", &TrajectorySQP<double>::num_steps)
       .def("Solve",
@@ -104,6 +104,8 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("EvalEqualityConstraintJacobian", &TrajectorySQP<double>::EvalEqualityConstraintJacobian)
       .def("params", &TrajectorySQP<double>::params)
       .def("prob", &TrajectorySQP<double>::prob)
+      .def("unactuated_dofs", &TrajectorySQP<double>::unactuated_dofs)
+      .def("actuated_dofs", &TrajectorySQP<double>::actuated_dofs)
       .def("GetQIndex", &TrajectorySQP<double>::GetQIndex)
       .def("GetUIndex", &TrajectorySQP<double>::GetUIndex)
       .def("GetDynamicsResidual", &TrajectorySQP<double>::GetDynamicsResidual)

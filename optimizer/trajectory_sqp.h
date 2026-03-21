@@ -29,6 +29,7 @@ class TrajectorySQP : public TrajectoryOptimizer<T> {
   
   TrajectorySQP(const Diagram<T>* diagram, const MultibodyPlant<T>* plant,
                       const ProblemDefinition& prob,
+                      const Eigen::VectorXd& scaling,
                       const SolverParameters& params = SolverParameters{});
 
   // Get indices into decision variable vector
@@ -44,7 +45,11 @@ class TrajectorySQP : public TrajectoryOptimizer<T> {
 
   // Problem dimensions
   const int nq_;
+  const int nv_;
   const int nu_;
+
+  // Problem scaling
+  const Eigen::VectorXd scaling_;
 
   // Symbolic variables (TODO: are these used?)
   std::vector<VectorXDecisionVariable> q_sym_;
@@ -56,6 +61,7 @@ class TrajectorySQP : public TrajectoryOptimizer<T> {
 
   // Dynamics jacobian and residual
   const int nc_dynamics_;
+  std::vector<Eigen::VectorXi> dynamics_index_;
   Eigen::VectorXd dynamics_residual_;
   Eigen::MatrixXd dynamics_jacobian_;
 };
