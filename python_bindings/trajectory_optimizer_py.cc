@@ -103,6 +103,7 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("EvalEqualityConstraintViolations", &TrajectorySQP::EvalEqualityConstraintViolations)
       .def("EvalEqualityConstraintJacobian", &TrajectorySQP::EvalEqualityConstraintJacobian)
       .def("UpdateDynamicsResidual", &TrajectorySQP::UpdateDynamicsResidual)
+      .def("UpdateDynamicsJacobian", &TrajectorySQP::updateDynamicsJacobian)
       .def("params", &TrajectorySQP::params)
       .def("prob", &TrajectorySQP::prob)
       .def("unactuated_dofs", &TrajectorySQP::unactuated_dofs)

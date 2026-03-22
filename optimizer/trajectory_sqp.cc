@@ -64,5 +64,19 @@ void TrajectorySQP::UpdateDynamicsResidual(const TrajectoryOptimizerState<double
   }
 }
 
+void TrajectorySQP::updateDynamicsJacobian(const TrajectoryOptimizerState<double>& state) {
+  // Compute jacobian
+  Eigen::MatrixXd jacobian = this->EvalTauJacobian(state);
+
+  // Update jacobian
+  double tau_scale = scaling_(u_index_[0])[0]; // TODO extract once
+  for (int k = 0; k < this->num_steps(); ++k) {
+    Eigen::MatrixXd knot_jac = jacobian.block(k*nv_, (k + 1)*nq_, nv_, nq_);
+    dynamics_jacobian_(dynamics_index_[k].segment(0, nv_ - nu_), q_index_[k]) = knot_jac(this->unactuated_dofs(), Eigen::all) / tau_scale;
+    dynamics_jacobian_(dynamics_index_[k].segment(nv_ - nu_, nu_), q_index_[k]) = knot_jac(this->actuated_dofs(), Eigen::all);
+  }
+}
+
+
 }  // namespace optimizer
 }  // namespace idto

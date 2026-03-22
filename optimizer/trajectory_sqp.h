@@ -42,6 +42,9 @@ class TrajectorySQP : public TrajectoryOptimizer<double> {
   // Update the dynamics constraint residual in place
   void UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state);
 
+  // Update the dynamics constraint jacobian in place
+  void updateDynamicsJacobian(const TrajectoryOptimizerState<double>& state);
+
   // Instantiate mathematical program
   MathematicalProgram prog_; 
 
