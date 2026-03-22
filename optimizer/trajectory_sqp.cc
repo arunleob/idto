@@ -48,7 +48,7 @@ TrajectorySQP::TrajectorySQP(const Diagram<double>* diagram,
   }
 }
 
-void TrajectorySQP::UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state) {
+void TrajectorySQP::UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state, const Eigen::VectorXd& z) {
   // Compute tau
   this->EvalEqualityConstraintViolations(state);
 
@@ -60,7 +60,7 @@ void TrajectorySQP::UpdateDynamicsResidual(const TrajectoryOptimizerState<double
     Eigen::VectorXd tau_act = state.tau()[k](this->actuated_dofs());
 
     dynamics_residual_(dynamics_index_[k].segment(0, nv_ - nu_)) = tau_unact/tau_scale;
-    dynamics_residual_(dynamics_index_[k].segment(nv_ - nu_, nu_)) = tau_act;
+    dynamics_residual_(dynamics_index_[k].segment(nv_ - nu_, nu_)) = tau_act - z(u_index_[k]);
   }
 }
 

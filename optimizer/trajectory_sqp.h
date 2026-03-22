@@ -40,7 +40,7 @@ class TrajectorySQP : public TrajectoryOptimizer<double> {
   Eigen::MatrixXd GetDynamicsJacobian() const { return dynamics_jacobian_; }
 
   // Update the dynamics constraint residual in place
-  void UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state);
+  void UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state, const Eigen::VectorXd& z);
 
   // Update the dynamics constraint jacobian in place
   void updateDynamicsJacobian(const TrajectoryOptimizerState<double>& state);
