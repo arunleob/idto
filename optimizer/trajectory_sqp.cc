@@ -33,6 +33,9 @@ TrajectorySQP::TrajectorySQP(const Diagram<double>* diagram,
     u_index_[k] = prog_.FindDecisionVariableIndices(u_sym_[k]);
   }
 
+  // Init cost
+  this->ConstructCostHessianAndGradient();
+
   // Init dynamics indices, residuals, and jacobian
   dynamics_index_.resize(this->num_steps());
   for (int k = 0; k < this->num_steps(); ++k) {
@@ -46,6 +49,25 @@ TrajectorySQP::TrajectorySQP(const Diagram<double>* diagram,
   for (int k = 0; k < this->num_steps(); ++k) {
     dynamics_jacobian_(dynamics_index_[k].segment(nv_ - nu_, nu_), u_index_[k]) = tau_scaling;
   }
+}
+
+void TrajectorySQP::ConstructCostHessianAndGradient() {
+  for (int k = 0; k < num_steps(); ++k) {
+    if (k < num_steps() - 1) {
+      prog_.AddQuadraticErrorCost(prob_.Qq*time_step()*0.5, prob_.q_nom[k+1], q_sym_[k]);
+    } else {  
+      prog_.AddQuadraticErrorCost(prob_.Qf_q*0.5, prob_.q_nom[k+1], q_sym_[k]);
+    }
+    prog_.AddQuadraticCost(prob_.R(this->actuated_dofs(), this->actuated_dofs())*time_step(), VectorX<double>::Zero(nu_), u_sym_[k]);
+  }
+}
+
+double TrajectorySQP::EvalCost(VectorX<double> z) {
+  double J = 0;
+  for (Binding<Cost> binding : prog_.GetAllCosts()) {
+    J += prog_.EvalBinding(binding, z).sum();
+  }
+  return J;
 }
 
 void TrajectorySQP::UpdateDynamicsResidual(const TrajectoryOptimizerState<double>& state, const Eigen::VectorXd& z) {

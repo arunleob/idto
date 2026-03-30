@@ -111,7 +111,8 @@ void bind_trajectory_optimizer(py::module_& m) {
       .def("GetQIndex", &TrajectorySQP::GetQIndex)
       .def("GetUIndex", &TrajectorySQP::GetUIndex)
       .def("GetDynamicsResidual", &TrajectorySQP::GetDynamicsResidual)
-      .def("GetDynamicsJacobian", &TrajectorySQP::GetDynamicsJacobian);
+      .def("GetDynamicsJacobian", &TrajectorySQP::GetDynamicsJacobian)
+      .def("EvalCost", &TrajectorySQP::EvalCost);
   py::class_<WarmStart>(m, "WarmStart")
       // Warm start is not default constructible: it should be created
       // in python using the TrajectoryOptimizer.CreateWarmStart method.

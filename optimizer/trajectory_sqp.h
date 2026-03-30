@@ -20,6 +20,8 @@ using drake::systems::Context;
 using drake::systems::Diagram;
 using drake::solvers::MathematicalProgram;
 using drake::solvers::VectorXDecisionVariable;
+using drake::solvers::Binding;
+using drake::solvers::Cost;
 using internal::PentaDiagonalMatrix;
 
 class TrajectorySQP : public TrajectoryOptimizer<double> {
@@ -34,6 +36,15 @@ class TrajectorySQP : public TrajectoryOptimizer<double> {
   // Get indices into decision variable vector
   std::vector<std::vector<int>> GetQIndex() const { return q_index_; }
   std::vector<std::vector<int>> GetUIndex() const { return u_index_; }
+
+  /**
+   * Add quadratic costs to the mathematical program for each knot point
+   * and each cost type. Currently supported quadratic costs are
+   * q, v, u, and u_dot.
+   */
+  void ConstructCostHessianAndGradient();
+
+  double EvalCost(VectorX<double> z);
 
   // Get dynamics residual and jacobian
   Eigen::VectorXd GetDynamicsResidual() const { return dynamics_residual_; }
@@ -63,6 +74,10 @@ class TrajectorySQP : public TrajectoryOptimizer<double> {
   // Indices into SQP decision vector
   std::vector<std::vector<int>> q_index_;
   std::vector<std::vector<int>> u_index_;
+
+  // Cost gradient and cost hessian
+  Eigen::VectorXd cost_gradient_;
+  Eigen::MatrixXd cost_hessian_;
 
   // Dynamics jacobian and residual
   const int nc_dynamics_;
